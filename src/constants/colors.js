@@ -1,0 +1,14 @@
+export const COLORS = {
+    background: '#1d2827ff',
+    cardBackground: '#0d1211ff',
+    text: '#ffffff',
+    textSecondary: '#ffffffc6',
+    primary: '#0d3f3a',
+    primaryDark: '#0b2b29',
+    accent: '#aabdeaff',
+    shadow: '#4f4e4eff',
+    optionSelected: 'rgba(255, 255, 255, 0.93)',
+    optionDefault: 'rgba(255,255,255,0.06)',
+    optionPressed: 'rgba(255, 255, 255, 0.45)',
+    textDark: '#2d2a2aff',
+};
