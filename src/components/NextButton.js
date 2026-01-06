@@ -1,14 +1,19 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 import { COLORS } from '../constants/colors';
 
-export default function NextButton({ onPress }) {
+export default function NextButton({ onPress, disabled }) {
     return (
         <View style={styles.navigation}>
             <Pressable
-                onPress={onPress}
+                onPress={disabled ? null : onPress}
                 style={({ pressed }) => [
                     styles.navButton,
-                    { backgroundColor: pressed ? COLORS.primaryDark : COLORS.primary }
+                    {
+                        backgroundColor: disabled
+                            ? COLORS.optionDefault
+                            : (pressed ? COLORS.primaryDark : COLORS.primary),
+                        opacity: disabled ? 0.7 : 1
+                    }
                 ]}
             >
                 <Text style={styles.buttonText}>

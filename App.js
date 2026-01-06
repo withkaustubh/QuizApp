@@ -1,53 +1,53 @@
 import { StyleSheet, View } from 'react-native';
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { questions } from './src/data/quizData';
 import { COLORS } from './src/constants/colors';
-import Question from './src/components/Question';
-import OptionButton from './src/components/OptionButton';
-import Header from './src/components/Header';
-import Footer from './src/components/Footer';
-import QuizCompletion from './src/components/QuizCompletion';
-import NextButton from './src/components/NextButton';
+import { questions } from './src/data/quizData';
+
+import WelcomeScreen from './src/screens/WelcomeScreen';
+import NameScreen from './src/screens/NameScreen';
+import QuizScreen from './src/screens/QuizScreen';
+import ResultScreen from './src/screens/ResultScreen';
 
 export default function App() {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [optionSelected, setOptionSelected] = useState(null);
+  const [screen, setScreen] = useState('welcome');
+  const [username, setUsername] = useState('');
+  const [score, setScore] = useState(0);
 
-  const handleOptionPress = (index) => {
-    if (currentQuestion < questions.length) {
-      setOptionSelected(index);
-    }
+  const handleWelcomeFinish = () => {
+    setScreen('name');
   };
 
-  const OnPressNext = () => {
-    if (currentQuestion < questions.length) {
-      setCurrentQuestion(currentQuestion + 1);
-      setOptionSelected(null);
-    }
+  const handleNameSubmit = (name) => {
+    setUsername(name);
+    setScreen('quiz');
+  };
+
+  // QuizScreen now handles the score internally and passes final score
+  const handleQuizFinish = (finalScore) => {
+    setScore(finalScore);
+    setScreen('result');
+  };
+
+  const handleRetry = () => {
+    setScore(0);
+    setScreen('quiz');
+    // Or 'welcome' if full restart desired. 'quiz' keeps username.
+    // User asked for "reset button", usually implies retrying the quiz.
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {currentQuestion < questions.length ? (
-        <>
-          <Header />
-          <View style={styles.QuestionCard} >
-            <Question question={questions[currentQuestion].question} />
-            {questions[currentQuestion].options.map((option, index) => (
-              <OptionButton
-                key={index}
-                option={option}
-                onPress={() => handleOptionPress(index)}
-                isSelected={optionSelected === index}
-              />
-            ))}
-          </View>
-          <NextButton onPress={OnPressNext} />
-          <Footer currentQuestion={currentQuestion} totalQuestions={questions.length} />
-        </>
-      ) : (
-        <QuizCompletion />
+      {screen === 'welcome' && <WelcomeScreen onFinish={handleWelcomeFinish} />}
+      {screen === 'name' && <NameScreen onStart={handleNameSubmit} />}
+      {screen === 'quiz' && <QuizScreen onFinish={handleQuizFinish} />}
+      {screen === 'result' && (
+        <ResultScreen
+          score={score}
+          totalQuestions={questions.length}
+          username={username}
+          onRetry={handleRetry}
+        />
       )}
     </SafeAreaView>
   );
@@ -59,20 +59,4 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
     flexDirection: 'column',
   },
-  QuestionCard: {
-    marginTop: '30%',
-    padding: 15,
-    backgroundColor: COLORS.cardBackground,
-    borderRadius: 10,
-    width: '85%',
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: COLORS.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    elevation: 10,
-  },
 });
-
-//

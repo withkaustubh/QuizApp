@@ -11,4 +11,6 @@ export const COLORS = {
     optionDefault: 'rgba(255,255,255,0.06)',
     optionPressed: 'rgba(255, 255, 255, 0.45)',
     textDark: '#2d2a2aff',
+    success: '#4CAF50',
+    error: '#FF5252',
 };
