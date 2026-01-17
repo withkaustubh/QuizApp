@@ -1,19 +1,21 @@
 import { StyleSheet, View, Text, Pressable, ScrollView } from 'react-native';
 import { useState } from 'react';
 import { questions } from '../data/quizData';
-import { COLORS } from '../constants/colors';
+import { useTheme } from '../context/ThemeContext';
 import Question from '../components/Question';
 import OptionButton from '../components/OptionButton';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import NextButton from '../components/NextButton';
 
-export default function QuizScreen({ onFinish }) {
+export default function QuizScreen({ navigation, route }) {
+    const { name } = route.params || { name: 'User' };
     const [currentQuestion, setCurrentQuestion] = useState(0);
     // State arrays to track history
     const [userAnswers, setUserAnswers] = useState(new Array(questions.length).fill(null));
     const [isQuestionChecked, setIsQuestionChecked] = useState(new Array(questions.length).fill(false));
     const [score, setScore] = useState(0);
+    const { theme } = useTheme();
 
     // Derived state for current question
     const optionSelected = userAnswers[currentQuestion];
@@ -32,10 +34,6 @@ export default function QuizScreen({ onFinish }) {
         newChecked[currentQuestion] = true;
         setIsQuestionChecked(newChecked);
 
-        // Score Logic
-        // Only valid if we haven't already scored this question? 
-        // Current logic: simple increment. 
-        // Improve: Keep score simple as requested.
         if (optionSelected !== null && optionSelected === questions[currentQuestion].correctAnswer) {
             setScore(prev => prev + 1);
         }
@@ -45,7 +43,7 @@ export default function QuizScreen({ onFinish }) {
         if (currentQuestion < questions.length - 1) {
             setCurrentQuestion(currentQuestion + 1);
         } else {
-            onFinish(score);
+            navigation.navigate('Result', { score, name });
         }
     };
 
@@ -56,9 +54,9 @@ export default function QuizScreen({ onFinish }) {
     };
 
     return (
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        <ScrollView style={[styles.container, { backgroundColor: theme.background }]} contentContainerStyle={styles.contentContainer}>
             <Header onBack={currentQuestion > 0 ? handlePrev : null} />
-            <View style={styles.QuestionCard} >
+            <View style={[styles.QuestionCard, { backgroundColor: theme.cardBackground, shadowColor: theme.shadow }]} >
                 <Question question={questions[currentQuestion].question} />
                 {questions[currentQuestion].options.map((option, index) => (
                     <OptionButton
@@ -76,15 +74,19 @@ export default function QuizScreen({ onFinish }) {
                 <Pressable
                     style={[
                         styles.checkButton,
-                        { backgroundColor: isChecked ? COLORS.optionDefault : COLORS.primary, opacity: optionSelected === null ? 0.5 : 1 }
+                        { backgroundColor: isChecked ? theme.optionDefault : theme.primary, opacity: optionSelected === null ? 0.5 : 1 }
                     ]}
                     onPress={handleCheck}
                     disabled={optionSelected === null || isChecked}
                 >
-                    <Text style={styles.buttonText}>Check</Text>
+                    <Text style={[styles.buttonText, { color: isChecked ? theme.textSecondary : theme.text }]}>Check</Text>
                 </Pressable>
             </View>
-            <NextButton onPress={OnPressNext} disabled={!isChecked} />
+            <NextButton
+                onPress={OnPressNext}
+                disabled={!isChecked}
+                title={currentQuestion === questions.length - 1 ? "Finish" : "Next"}
+            />
             <Footer currentQuestion={currentQuestion} totalQuestions={questions.length} />
         </ScrollView>
     );
@@ -100,15 +102,14 @@ const styles = StyleSheet.create({
         paddingBottom: 40,
     },
     QuestionCard: {
-        marginTop: '10%', // Reduced from 25% to allow more space
+        marginTop: '10%',
         padding: 15,
-        backgroundColor: COLORS.cardBackground,
         borderRadius: 10,
         width: '85%',
+        maxWidth: 600,
         alignSelf: 'center',
         alignItems: 'center',
         justifyContent: 'center',
-        shadowColor: COLORS.shadow,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.8,
         elevation: 10,
@@ -122,7 +123,6 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     buttonText: {
-        color: COLORS.text,
         fontSize: 16,
         fontWeight: 'bold',
     },

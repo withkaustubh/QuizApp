@@ -1,26 +1,37 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
-import { COLORS } from '../constants/colors';
-
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../context/ThemeContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Header({ onBack }) {
+    const { theme, toggleTheme, isDarkMode } = useTheme();
+    const insets = useSafeAreaInsets();
+
     return (
-        <View style={styles.headerContainer}>
+        <View style={[styles.headerContainer, {
+            backgroundColor: theme.cardBackground,
+            shadowColor: theme.shadow,
+            marginTop: insets.top
+        }]}>
             {onBack && (
                 <Pressable
                     onPress={onBack}
                     style={({ pressed }) => [
                         styles.backButton,
-                        { backgroundColor: pressed ? 'rgba(255,255,255,0.1)' : 'transparent' }
+                        { backgroundColor: pressed ? theme.optionPressed : 'transparent' }
                     ]}
                 >
-                    <Ionicons name="chevron-back" size={24} color={COLORS.text} />
+                    <Ionicons name="chevron-back" size={24} color={theme.text} />
                 </Pressable>
             )}
             <View>
-                <Text style={styles.appName}>QuizApp</Text>
-                <Text style={styles.appTagline}>Test your knowledge!</Text>
+                <Text style={[styles.appName, { color: theme.text }]}>QuizApp</Text>
+                <Text style={[styles.appTagline, { color: theme.textSecondary }]}>Test your knowledge!</Text>
             </View>
+            <View style={{ flex: 1 }} />
+            <Pressable style={styles.themeButton} onPress={toggleTheme}>
+                <Ionicons name={isDarkMode ? "moon" : "sunny"} size={24} color={theme.text} />
+            </Pressable>
         </View>
     );
 }
@@ -30,25 +41,26 @@ const styles = StyleSheet.create({
         width: '98%',
         marginBottom: 10,
         padding: 15,
-        backgroundColor: COLORS.cardBackground,
         borderRadius: 5,
         flexDirection: 'row',
         alignItems: 'center',
+        elevation: 2,
     },
     backButton: {
         marginRight: 15,
         padding: 5,
-        borderRadius: 20, // Makes the background circular
+        borderRadius: 20,
     },
     appName: {
         fontFamily: 'Times New Roman',
         fontSize: 18,
         fontWeight: 'bold',
-        color: COLORS.text,
         paddingBottom: 5,
     },
     appTagline: {
         fontSize: 13,
-        color: COLORS.text,
+    },
+    themeButton: {
+        padding: 5,
     },
 });

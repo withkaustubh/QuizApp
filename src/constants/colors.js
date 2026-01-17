@@ -13,4 +13,23 @@ export const COLORS = {
     textDark: '#2d2a2aff',
     success: '#4CAF50',
     error: '#FF5252',
+    buttonText: '#ffffff',
+};
+
+export const COLORS_LIGHT = {
+    background: '#F5F7FA',
+    cardBackground: '#FFFFFF',
+    text: '#333333',
+    textSecondary: '#555555',
+    primary: '#009688',
+    primaryDark: '#00796B',
+    accent: '#64B5F6',
+    shadow: '#E0E0E0',
+    optionSelected: 'rgba(0, 150, 136, 0.2)',
+    optionDefault: '#F0F0F0',
+    optionPressed: 'rgba(0, 150, 136, 0.1)',
+    textDark: '#ffffff', // For buttons that might have dark bg
+    success: '#4CAF50',
+    error: '#FF5252',
+    buttonText: '#ffffff',
 };

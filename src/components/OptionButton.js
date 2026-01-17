@@ -1,13 +1,15 @@
 import { Text, Pressable, StyleSheet } from 'react-native';
-import { COLORS } from '../constants/colors';
+import { useTheme } from '../context/ThemeContext';
 
 export default function OptionButton(props) {
+    const { theme } = useTheme();
+
     const getBackgroundColor = (pressed) => {
-        if (props.isCorrect) return COLORS.success;
-        if (props.isWrong) return COLORS.error;
-        if (pressed) return COLORS.optionPressed;
-        if (props.isSelected) return COLORS.optionSelected;
-        return COLORS.optionDefault;
+        if (props.isCorrect) return theme.success;
+        if (props.isWrong) return theme.error;
+        if (pressed) return theme.optionPressed;
+        if (props.isSelected) return theme.optionSelected;
+        return theme.optionDefault;
     };
 
     return (
@@ -22,7 +24,12 @@ export default function OptionButton(props) {
                 }
             ]}
         >
-            <Text style={props.isSelected || props.isCorrect || props.isWrong ? styles.textSelected : styles.textNotSelected}>{props.option}</Text>
+            <Text style={[
+                props.isSelected || props.isCorrect || props.isWrong ? styles.textSelected : styles.textNotSelected,
+                { color: props.isSelected || props.isCorrect || props.isWrong ? theme.textDark : theme.textSecondary }
+            ]}>
+                {props.option}
+            </Text>
         </Pressable>
     )
 }
@@ -34,20 +41,17 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: COLORS.optionDefault,
     },
     textNotSelected: {
         fontSize: 16,
         fontWeight: '600',
         letterSpacing: 0.3,
-        color: COLORS.textSecondary,
         textAlign: 'center',
     },
     textSelected: {
         fontSize: 16,
         fontWeight: '600',
         letterSpacing: 0.3,
-        color: COLORS.textDark,
         textAlign: 'center',
     }
 });

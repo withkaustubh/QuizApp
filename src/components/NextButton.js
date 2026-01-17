@@ -1,7 +1,9 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
-import { COLORS } from '../constants/colors';
+import { useTheme } from '../context/ThemeContext';
 
-export default function NextButton({ onPress, disabled }) {
+export default function NextButton({ onPress, disabled, title = "Next" }) {
+    const { theme } = useTheme();
+
     return (
         <View style={styles.navigation}>
             <Pressable
@@ -10,14 +12,14 @@ export default function NextButton({ onPress, disabled }) {
                     styles.navButton,
                     {
                         backgroundColor: disabled
-                            ? COLORS.optionDefault
-                            : (pressed ? COLORS.primaryDark : COLORS.primary),
+                            ? theme.optionDefault
+                            : (pressed ? theme.primaryDark : theme.primary),
                         opacity: disabled ? 0.7 : 1
                     }
                 ]}
             >
                 <Text style={styles.buttonText}>
-                    Next
+                    {title}
                 </Text>
             </Pressable>
         </View>
@@ -26,22 +28,26 @@ export default function NextButton({ onPress, disabled }) {
 
 const styles = StyleSheet.create({
     navigation: {
-        flex: 1,
-        marginTop: 40,
+        marginTop: 30,
+        marginBottom: 10,
+        marginRight: '7.5%',
+        alignItems: 'flex-end',
+        width: '100%',
+        maxWidth: 600,
+        paddingRight: 20,
     },
     navButton: {
         paddingVertical: 12,
-        paddingHorizontal: 16,
+        paddingHorizontal: 24,
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
-        shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         elevation: 4,
-        marginLeft: '60%',
-        width: 100,
+        width: 'auto',
+        minWidth: 120,
     },
     buttonText: {
         color: '#ffffff',

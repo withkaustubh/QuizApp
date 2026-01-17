@@ -1,62 +1,51 @@
-import { StyleSheet, View } from 'react-native';
-import { useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS } from './src/constants/colors';
-import { questions } from './src/data/quizData';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { StatusBar } from 'expo-status-bar';
+import { ThemeProvider, useTheme } from './src/context/ThemeContext';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import WelcomeScreen from './src/screens/WelcomeScreen';
 import NameScreen from './src/screens/NameScreen';
+import HomeScreen from './src/screens/HomeScreen';
 import QuizScreen from './src/screens/QuizScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
 import ResultScreen from './src/screens/ResultScreen';
 
-export default function App() {
-  const [screen, setScreen] = useState('welcome');
-  const [username, setUsername] = useState('');
-  const [score, setScore] = useState(0);
+const Stack = createNativeStackNavigator();
 
-  const handleWelcomeFinish = () => {
-    setScreen('name');
-  };
-
-  const handleNameSubmit = (name) => {
-    setUsername(name);
-    setScreen('quiz');
-  };
-
-  // QuizScreen now handles the score internally and passes final score
-  const handleQuizFinish = (finalScore) => {
-    setScore(finalScore);
-    setScreen('result');
-  };
-
-  const handleRetry = () => {
-    setScore(0);
-    setScreen('quiz');
-    // Or 'welcome' if full restart desired. 'quiz' keeps username.
-    // User asked for "reset button", usually implies retrying the quiz.
-  };
+// Create a wrapper component to consume the theme for the Navigator props
+const AppNavigator = () => {
+  const { theme, isDarkMode } = useTheme();
 
   return (
-    <SafeAreaView style={styles.container}>
-      {screen === 'welcome' && <WelcomeScreen onFinish={handleWelcomeFinish} />}
-      {screen === 'name' && <NameScreen onStart={handleNameSubmit} />}
-      {screen === 'quiz' && <QuizScreen onFinish={handleQuizFinish} />}
-      {screen === 'result' && (
-        <ResultScreen
-          score={score}
-          totalQuestions={questions.length}
-          username={username}
-          onRetry={handleRetry}
-        />
-      )}
-    </SafeAreaView>
+    <>
+      <StatusBar style={isDarkMode ? "light" : "dark"} />
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: theme.background }, // Use dynamic color
+        }}
+        initialRouteName="Welcome"
+      >
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
+        <Stack.Screen name="Name" component={NameScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Quiz" component={QuizScreen} />
+        <Stack.Screen name="Result" component={ResultScreen} />
+      </Stack.Navigator>
+    </>
+  );
+};
+
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <ThemeProvider>
+        <NavigationContainer>
+          <AppNavigator />
+        </NavigationContainer>
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-    flexDirection: 'column',
-  },
-});

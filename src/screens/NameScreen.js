@@ -1,29 +1,34 @@
 import { StyleSheet, View, Text, TextInput, Pressable } from 'react-native';
 import { useState } from 'react';
-import { COLORS } from '../constants/colors';
+import { useTheme } from '../context/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function NameScreen({ onStart }) {
+export default function NameScreen({ navigation }) {
     const [name, setName] = useState('');
+    const { theme, toggleTheme, isDarkMode } = useTheme();
 
     const handlePress = () => {
         if (name.trim()) {
-            onStart(name);
+            navigation.navigate('Home', { name });
         }
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.QuestionCard}>
-                <Text style={styles.titleText}>Enter your name</Text>
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
+            <Pressable style={styles.themeButton} onPress={toggleTheme}>
+                <Ionicons name={isDarkMode ? "moon" : "sunny"} size={24} color={theme.text} />
+            </Pressable>
+            <View style={[styles.QuestionCard, { backgroundColor: theme.cardBackground, shadowColor: theme.shadow }]}>
+                <Text style={[styles.titleText, { color: theme.text }]}>Enter your name</Text>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, { borderColor: theme.textSecondary, color: theme.text }]}
                     placeholder="Your name"
-                    placeholderTextColor={COLORS.textSecondary}
+                    placeholderTextColor={theme.textSecondary}
                     value={name}
                     onChangeText={setName}
                 />
-                <Pressable style={styles.button} onPress={handlePress}>
-                    <Text style={styles.buttonText}>Start Quiz</Text>
+                <Pressable style={[styles.button, { backgroundColor: theme.primary }]} onPress={handlePress}>
+                    <Text style={[styles.buttonText, { color: theme.buttonText }]}>Start Quiz</Text>
                 </Pressable>
             </View>
         </View>
@@ -38,13 +43,12 @@ const styles = StyleSheet.create({
     },
     QuestionCard: {
         padding: 20,
-        backgroundColor: COLORS.cardBackground,
         borderRadius: 10,
         width: '85%',
+        maxWidth: 500,
         alignSelf: 'center',
         alignItems: 'center',
         justifyContent: 'center',
-        shadowColor: COLORS.shadow,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.8,
         elevation: 10,
@@ -53,28 +57,30 @@ const styles = StyleSheet.create({
         fontSize: 22,
         textAlign: 'center',
         marginBottom: 20,
-        color: COLORS.text,
         fontWeight: '600',
     },
     input: {
         width: '100%',
-        borderColor: COLORS.textSecondary,
         borderWidth: 1,
         borderRadius: 8,
         padding: 12,
         marginBottom: 20,
-        color: COLORS.text,
         fontSize: 16,
     },
     button: {
-        backgroundColor: COLORS.primary,
         paddingVertical: 12,
         paddingHorizontal: 30,
         borderRadius: 8,
     },
     buttonText: {
-        color: COLORS.text,
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    themeButton: {
+        position: 'absolute',
+        top: 50,
+        right: 20,
+        padding: 10,
+        zIndex: 10,
     },
 });

@@ -1,10 +1,11 @@
 import { Text, View, StyleSheet } from 'react-native';
-import { COLORS } from '../constants/colors';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Question(props) {
+    const { theme } = useTheme();
     return (
         <View>
-            <Text style={styles.text}>{props.question}</Text>
+            <Text style={[styles.text, { color: theme.accent }]}>{props.question}</Text>
         </View>
     )
 }
@@ -13,7 +14,6 @@ const styles = StyleSheet.create(
         text: {
             fontSize: 20,
             fontWeight: 'bold',
-            color: COLORS.accent,
             textAlign: 'center',
             marginTop: 20,
             marginBottom: 20
